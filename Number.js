@@ -60,3 +60,19 @@ let y = 0.2;
 let z = 0.1;
 console.log(x - y == y - z); // false
 console.log(x - y == 0.1); // false
+// 3.2.5 BigInt
+console.log(0o1234n);
+let string = "1" + "0".repeat(10);
+console.log(BigInt(string));
+
+console.log(300n / 97n); // ->3 Особенность БигИнт в том, что деление отбрасывает любой остаток
+console.log(2n ** 131071n - 1n); // Число Мерсенна имеющее 39257 десятичных знаков
+// 3.2.6 Time
+// Показывает сколько секунд прошло с 1 января 1970 года:
+let timestamp = Date.now(); // Текущее время как отметка времени
+let now = new Date(); // Текущее время в стандартном формате
+let ms = now.getTime(); // Преобразовали в мс
+let iso = now.toISOString(); // Преобразовали в строку со стандартным форматом
+console.log(now);
+console.log(ms);
+console.log(iso);
