@@ -118,3 +118,5 @@ let tt = Symbol.for("shared");
 ss === tt; // =>true
 console.log(ss.toString());
 console.log(Symbol.keyFor(tt));
+// 3.7 Глобальный обьект
+// в js глобальный обьект называется Window который ссылается на себя методом window
