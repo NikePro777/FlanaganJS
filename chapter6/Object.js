@@ -149,3 +149,23 @@ console.log(o.toString !== undefined); // унаследовалось
 o.x = undefined;
 console.log(o.x !== undefined); // false (хотя свойство есть)
 console.log("x" in o); // true
+
+// 6.6 Перечисление свойств обьекта
+let wer = Symbol("d");
+o = { x: 1, y: 2, z: 3 };
+o[wer] = 4;
+console.log(o.propertyIsEnumerable("toString")); // false т.к. не перечислимое
+for (let p in o) {
+  console.log(p); // собственно выведем все свойства
+}
+for (let p in o) {
+  if (!o.hasOwnProperty(p)) continue; // Условие, благодаря которому будут пропускаться унаследованные свойства
+  if (typeof o[p] === "function") continue; // условие, благодаря которому будут пропускаться методы
+  console.log(p);
+}
+
+// Если нам нужно получить массив имен свойств, тогда есть следующие варианты:
+console.log(Object.keys(o)); // кладет в массив только собственные перечислимые свойства , причем строковые. (Унаследованные или символ пропустит)
+console.log(Object.getOwnPropertyNames(o)); // тоже что и keys только собственные неперечислимые тоже сюда засунет
+console.log(Object.getOwnPropertySymbols(o)); // Делает массив из всех свойств имена которых типа СИМВОЛ (и перечслимые и нет)
+console.log(Reflect.ownKeys(o)); // Все собственные свойства (и строка и символ и неперечислимые)
