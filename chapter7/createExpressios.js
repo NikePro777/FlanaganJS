@@ -57,3 +57,74 @@ a.length = 1; // Если длиина которую мы установили 
 console.log(a); //['a'] - Все элементы индекс которых был выше чем длина - удаляются
 a.length = 10; // если мы установили длину больше - все элементы заполнятся пустыми значениями
 console.log(a); // ['a', empty × 9]
+// 7.5 Добавление и удаление элементов массива
+a = [];
+a.push(34, 5); // push для добавления в конец массива одного или нескольких элементов ~ a[length]=...
+console.log(a);
+a.unshift("sad", "sdfsf"); // Для добавления элементов в начало массива (со сдвигом всех остальных вправо)
+console.log(a);
+a.pop(2); // Удаляет последний элемент (противоположно push)
+a.shift(2); // Удаляет первый (противоположно unshift)
+console.log(a);
+// ну и delete которые не сдвигает остальные элементы а просто оставляет пустую ячейку (undefined)
+delete a[0]; // индекс обязателен
+console.log(a); //[empty, 34]
+
+// 7.6 Интерация по массивам
+// for/of самое простое
+let letters = [..."Hello world"];
+let string = [];
+for (let letter of letters) {
+  string += letter;
+}
+console.log(string); // Hello world - переписали строку. Все пустые элементы массива, такой цикл вернет как undefined
+
+let everyother = "";
+for (let [index, letter] of letters.entries()) {
+  // entries - пара ключ, значение
+  if (index % 2 === 0) {
+    everyother += letter;
+  }
+}
+console.log(everyother); // Hlowrd -только четные буквы
+// forEach() - передаем в качестве аргумента функцию, и foreach будет вызывать ее для каждого элемента
+let uppercase = [];
+letters.forEach((letter) => {
+  uppercase += letter.toUpperCase();
+});
+console.log(uppercase); //HELLO WORLD В отличие от for/of не будет проходится по несуществующим элементам
+// for
+let vowels = "";
+for (let i = 0; i < letters.length; i++) {
+  let letter = letters[i];
+  if (/[aeiou]/.test(letter)) {
+    //Проверяем на наличие символов согласно регулярному выражению
+    vowels += letter; // если есть то добавляем их
+  }
+}
+console.log(vowels);
+// Чтобы увеличить производительность (хз насколько) длину делают постоянной:
+// for (let i = 0; let = letters.length, i<let; i++)
+// for (let i = letters.length-1; i>0; i--) - Перебор массива в обратном направлении
+// Однако в этом случае нужно проверять значения массива на неопределенные:
+for (let i = 0; (let = letters.length), i < let; i++) {
+  if (a[i] === undefined) continue;
+  {
+    /*тело цикла*/
+  }
+}
+
+// 7.7 Многомерные массивы
+// Если есть массив, каждый элемент которого тоже массив, то для обращения к элементу надо: matrix[x][y]
+let table = new Array(10); // 10 строк таблицы
+for (i = 0; i < table.length; i++) {
+  table[i] = new Array(10); // Каждая строка имеет 10 столбцов
+}
+for (let row = 0; row < table.length; row++) {
+  // для каждого столба
+  for (let col = 0; col < table[row].length; col++) {
+    // каждой строчки в столбце
+    table[row][col] = row * col; // делаем перемножение
+  }
+}
+console.log(table[5][7]); // 35 получили таблицу умножения
