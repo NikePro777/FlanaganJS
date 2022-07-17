@@ -92,3 +92,33 @@ console.log(a.concat(4, 5)); //[1, 2, 3, 4, 5]
 console.log(a.concat([4, 5], [6, 7])); //[1, 2, 3, 4, 5, 6, 7]
 console.log(a.concat(4, [5, [6, 7]])); //[1, 2, 3, 4, 5, Array(2)] === [1, 2, 3, 4, 5,[6, 7]]
 console.log(a); // [1, 2, 3] - не изменил текущий массив
+
+// 7.8.4 Организация стеков и очередей с помощью push(), pop(), shift(), unshift()
+// push добавляет элемнт в конец массива и возвращает длину установившуюся
+// pop убирает последнее значение из массива и возвращает его
+let stack = []; // реализация стека
+console.log(stack.push(1, 2)); // вернет 2, так как длина массива 2 [1,2]
+console.log(stack.pop()); // вернет 2 так как убранный элемент 2
+console.log(stack.push(3));
+console.log(stack.pop());
+console.log(stack.push([4, 5])); //  push не выравнивает массив!!! [1,[4,5]]
+console.log(stack.pop()); // вернет [4,5]
+console.log(stack.pop()); // вернет 1
+//  чтобы добавить элементы и выровнить их можно воспользоваться оператором распространения ...
+let add = [3, 4, [5, 6]];
+console.log(stack.push(...add));
+console.log(stack);
+//с функцией шифта можно реализовать очередь
+let q = [];
+console.log(q.push(1, 2));
+console.log(q.shift()); // вернет 1 , так как удалил элемент равный 1
+console.log(q.push(3));
+console.log(q.shift());
+console.log(q.shift());
+// особенность unshift в том, что если мы в качестве аргумента передадим несколько, они встанут сразу...
+a = [];
+a.unshift(1);
+a.unshift(2); // a=[2,1]
+a = [];
+a.unshift(1, 2);
+console.log(a); // [1, 2]
