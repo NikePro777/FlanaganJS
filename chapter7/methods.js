@@ -162,3 +162,73 @@ console.log(a.copyWithin(2, 3, 5)); // вставить с третьего по
 console.log(a.copyWithin(0, -2)); // вставить с начала массива элементы начиная с предпоследнего // [4, 4, 3, 4, 4]
 
 // Методы поиска и сортировки массивов
+// indexOf() и lastIndexOf()
+// Ищут значение аргумента в массиве, и возврашают его индекс если находят, или -1
+// indexOf ищет слева направо, lastIndexOf - с конца
+a = [0, 1, 2, 1, 0];
+console.log(a.indexOf(1)); // 1
+console.log(a.lastIndexOf(1)); // 3
+console.log(a.indexOf(3)); // -1 так как нет такого
+// есть еще необязательный второй аргумент - индекс с которого надо начинать поиск(м.б. отрицательным)
+// Ишет все значения х в массиве, и возвращает массив с совпадающими индексами
+
+function findall(a, x) {
+  let results = [], // The array of indexes we'll return
+    len = a.length, // The length of the array to be searched
+    pos = 0; // The position to search from
+  while (pos < len) {
+    // Пока есть элементы для поиска
+    pos = a.indexOf(x, pos); // Ищем
+    if (pos === -1) break; // Если ничего не найдено - выходим
+    results.push(pos); // иначе сохраняем индекс в массиве
+    pos = pos + 1; // And start next search at next element
+  }
+  return results; // Return array of indexes
+}
+
+// includes()
+// Если указанный в аргументе элемент есть в массиве- вернет true, иначе false
+//  в отличие от indexOf имеет немного другой алгоритм- позваоляет находить NaN:
+a = [1, true, NaN, 3];
+console.log(a.includes(true)); // true
+console.log(a.includes(2)); //false
+console.log(a.includes(NaN)); //true
+console.log(a.indexOf(NaN)); //-1
+
+// sort() сортирует массив.
+// если без аргументов, то все преобразовывает в строку и сортирует в алфавитном порядке:
+a = ["banana", "cherry", "apple"];
+console.log(a.sort()); //['apple', 'banana', 'cherry']
+// Если нам нужно сравнить числа, то мы должны передать функцию, и далее эта функция
+// должна вернуть отрицательное число, если первый аргумент должен находится перед вторым,
+// и положительное, если второй аргумент должен быть впереди
+
+a = [33, 4, 1111, 222];
+console.log(a.sort()); // [1111, 222, 33, 4] т.к. 1 в алфавитном порядке меньше 2 и т.д.
+console.log(
+  a.sort(function (a, b) {
+    return a - b;
+  })
+); // [4, 33, 222, 1111]
+console.log(a.sort((a, b) => b - a)); //[1111, 222, 33, 4]
+// Сортировка в алфовитном порядке чувствительна к регистру, поэтому иногда надо привести к одному регистру:
+a = ["ant", "Bug", "cat", "Dog"];
+console.log(a.sort()); // ['Bug', 'Dog', 'ant', 'cat'] т.к. регистр решает
+// исправляем:
+console.log(
+  a.sort(function (q, w) {
+    a = q.toLowerCase();
+    b = w.toLowerCase();
+    if (a > b) {
+      return 1;
+    }
+    if (a < b) {
+      return -1;
+    }
+    return 0;
+  })
+); // ['ant', 'Bug', 'cat', 'Dog'] теперь нечувствительна к регистру
+
+// reverse() - изменяет на противоположный порядок следования элементов в массиве
+a = [1, 2, 3];
+console.log(a.reverse()); //[3, 2, 1]
