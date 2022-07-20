@@ -95,3 +95,21 @@ const strict = (function () {
   return !this;
 })();
 console.log(strict);
+
+// 8.2.2 Вызов метода. Метод это функция, хранящаяся в свойстве обьекта
+o = {};
+o.m = f;
+console.log(o.m);
+// Вызов метода от вызова функции отличается важным аспектом - наличием контекста вызова. на него можно ссылаться с помощью this:
+let calculator = {
+  operand1: 1,
+  operand2: 1,
+  add() {
+    this.result = this.operand1 + this.operand2;
+  },
+};
+console.log(calculator.result); // в данном случае она не вычеслена
+console.log(calculator.add()); // вычисляем
+console.log(calculator.result); // 2
+// Методы можно вызывать используя и [] :
+o["m"](3, 2);
