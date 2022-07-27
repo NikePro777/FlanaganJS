@@ -368,45 +368,65 @@ console.log(cc.count);
 
 // Следующая функция определяет переменную и два метода к ней - для установки и получения этой переменной
 
-// This function adds property accessor methods for a property with
-// the specified name to the object o. The methods are named get<name>
-// and set<name>. If a predicate function is supplied, the setter
-// method uses it to test its argument for validity before storing it.
-// If the predicate returns false, the setter method throws an exception.
+// Функция добавляет методы досутпа для свойства с указанным именем в обьекте о
+// Методы именуются как  get<name> и set<name>.
+//  Если предоставляется функция предиката ( проверяющая аргументы по к-л условию), тогда метод применяет ее для проверки своего аргумента на предмет допустимости
+// перед его сохранением. Если предикат возвращает false то метод установки генерирует исключение
 //
-// The unusual thing about this function is that the property value
-// that is manipulated by the getter and setter methods is not stored in
-// the object o. Instead, the value is stored only in a local variable
-// in this function. The getter and setter methods are also defined
-// locally to this function and therefore have access to this local variable.
-// This means that the value is private to the two accessor methods, and it
-// cannot be set or modified except through the setter method.
-function addPrivateProperty(o, name, predicate) {
-  let value; // This is the property value
+// Необычно в ней то, что значение свойства, которым манипулируют методы получения и установки, не сохраняются в обьекте о
+// Взамен значение хранится только в локальной переменной в данной функции
+// Методы получения и установки так же определяются локально внутри функции и потому имеют доступ к этой локальной переменной
+// Т.о. значение закрытопо отношению к двум методам доступа и его невозможно устанавливать или модифицировать иначе, чем через метод установки
 
-  // The getter method simply returns the value.
-  o[`get${name}`] = function () {
+function addPrivateProperty(obj, name, predicate) {
+  let value; // Значение свойства
+  // Метод получения, просто возвращает value
+  obj[`get${name}`] = function () {
     return value;
   };
 
-  // The setter method stores the value or throws an exception if
-  // the predicate rejects the value.
-  o[`set${name}`] = function (v) {
+  // Метод установки сохраняет значение или генерирует исключение, если предикат отклоняет значение
+  obj[`set${name}`] = function (v) {
     if (predicate && !predicate(v)) {
-      throw new TypeError(`set${name}: invalid value ${v}`);
+      throw new TypeError(`set${name}: недопустимое значение ${v}`);
     } else {
       value = v;
     }
   };
 }
 
-// The following code demonstrates the addPrivateProperty() method.
-let o = {}; // Here is an empty object
+// Далее демонстрация метода  addPrivateProperty()
+let obj = {}; // Пустой обьект
 
-// Add property accessor methods getName and setName()
-// Ensure that only string values are allowed
-addPrivateProperty(o, "Name", (x) => typeof x === "string");
+// Добавляем методы доступа к свойствам getName и setName()
+// Удостоверяемся что разрешены только строковые значения
+addPrivateProperty(obj, "Name", (x) => typeof x === "string");
 
-o.setName("Frank"); // Set the property value
-o.getName(); // => "Frank"
-o.setName(0); // !TypeError: try to set a value of the wrong type
+obj.setName("Frank"); // Установить значение свойства
+obj.getName(); // => "Frank"
+// obj.setName(0); // !TypeError: try to set a value of the wrong type (попытка установки значения неправильного типа)
+
+// еще 2 момента.
+// Функция которая возвращает функцию возвращающая значение v
+function constfunc(v) {
+  return () => v;
+}
+// создадим массив значений
+let funcs = [];
+for (var ii = 0; ii < 10; ii++) {
+  funcs[ii] = constfunc(ii);
+}
+console.log(funcs[5]()); // 5
+
+// а теперь распространенная ошибка:
+function constfuncs() {
+  let funcs = [];
+  for (var jj = 0; jj < 10; jj++) {
+    funcs[jj] = () => jj;
+  }
+  return funcs;
+}
+funcs = constfuncs();
+console.log(funcs[5]()); // 10  ПОЧЕМУ?????
+// все замыкания во втором случае определены в той же самой функции и разделяют jj в конце цикла jj=10 а значит все элементы нашего массива равны 10)
+// если заменить var на let или const , то все будет норм, т.к. у них блочная область видимости
