@@ -43,3 +43,76 @@ function f(y, z) {
 }
 g = f.bind({ x: 1 }, 2); // привязали this и y
 console.log(g(3)); // 6 т.к. this.x=1 , y=2
+
+// Метод toString()
+// возвращает полный исходный код функции. во встроенных функциях возвращает что то типа [native code]
+
+// 8.7.7 Конструктор Function()
+// - ожидает любое количество СТРОКОВЫХ аргументов. последний аргумент - тело функции. т.к. имя функции не ожидается, соответственно создает анонимные функции
+// - позволяет динамически создавать и компилировать во время выполняения функции js
+// - Производит разбор тела функции и создает новый обьект функции каждый раз, когда вызывается ( не оч хорошо в циклах)
+// - Создаваемые функции не используют лексическую область видимости. Они компилируются, как если бы были функциями верхнего уровня:
+let scope = "глобальная область видимости";
+function constructFunction() {
+  let scope = "локаольная область видимости";
+  return new Function("return scope"); // не захватывает локаольную scope!
+}
+console.log(constructFunction()()); //глобальная область видимости
+
+// 8.8 Функцинальное программирование
+// 8.8.1 Обработка массивов с помощью функций
+
+//Допустим у нас есть массив и мы хотим посчитать сред величину и отклонение. сначала сделаем это  в нефункциональном столе
+let data = [1, 1, 3, 5, 5];
+let total = 0;
+for (let i = 0; i < data.length; i++) total += data[i];
+let mean = total / data.length;
+console.log(mean); // 3 - среднее значение
+// для расчета отклонения мы суммируем квадраты отклонений
+total = 0;
+for (let i = 0; i < data.length; i++) {
+  let deviation = data[i] - mean;
+  total += deviation * deviation;
+}
+let stddev = Math.sqrt(total / (data.length - 1));
+console.log(stddev); //2
+
+// Теперь тоже самое но более локанично, в функциональном стиле:
+// Сначала определим две простые функции
+const sum1 = (x, y) => x + y;
+const square = (x) => x * x;
+// Затем используем их с методами Array:
+data = [1, 1, 3, 5, 5];
+mean = data.reduce(sum1) / data.length;
+console.log(mean); //3
+deviation = data.map((x) => x - mean);
+stddev = Math.sqrt(deviation.map(square).reduce(sum1) / (data.length - 1));
+console.log(stddev); // 2
+// Все еще ООП (map,reduce). Перепишем их функциональные версии
+const map = function (a, ...args) {
+  return a.map(...args);
+};
+const reduce = function (a, ...args) {
+  return a.reduce(...args);
+};
+// Теперь когда map и reduce это функции, наш код приобретает следующий вид:
+const summ = (x, y) => x + y;
+const squaree = (x) => x * x;
+data = [1, 1, 3, 5, 5];
+mean = reduce(data, summ) / data.length;
+deviation = map(data, (x) => x - mean);
+
+stddev = Math.sqrt(reduce(map(deviation, squaree), summ) / (data.length - 1));
+console.log(stddev); //3
+
+// 8.8.2 Функции высшего порядка
+// - это функция которая оперирует функциями (принимает функции и возвращает тоже функцию)
+function not(f) {
+  return function (...args) {
+    let result = f.apply(this, args); // Возвратить новую функцию, которая вызывает f
+    return !result; // и выполняет логическое отрицание результата
+  };
+}
+const even = (x) => x % 2 === 0; // Функция для определения четное или нечетное число
+const odd = not(even); // новая функция которая делает противоположное
+console.log([1, 1, 3, 5, 5].every(odd)); // true - каждый элемент массива является нечетным
