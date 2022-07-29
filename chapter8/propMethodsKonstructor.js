@@ -109,10 +109,39 @@ console.log(stddev); //3
 // - это функция которая оперирует функциями (принимает функции и возвращает тоже функцию)
 function not(f) {
   return function (...args) {
+    // console.log(args);
     let result = f.apply(this, args); // Возвратить новую функцию, которая вызывает f
+    // console.log(result);
     return !result; // и выполняет логическое отрицание результата
   };
 }
 const even = (x) => x % 2 === 0; // Функция для определения четное или нечетное число
 const odd = not(even); // новая функция которая делает противоположное
 console.log([1, 1, 3, 5, 5].every(odd)); // true - каждый элемент массива является нечетным
+
+// Другой пример
+// Возвращает функцию, которая ожидает массив и применяет f  к каждому эл-ту массива, возвращая массив врзвращаемых значений
+// Contrast this with the map() function from earlier.
+function mapper(f) {
+  return (a) => map(a, f);
+}
+const increment = (x) => x + 1;
+const incrementAll = mapper(increment);
+console.log(incrementAll([1, 2, 3])); // => [2,3,4]
+
+// Еще пример: функция которая принимает две функции и возвращает f(g(...)).
+// возвращаемая функция h передает все свои аргументы функции g, потом передает возвращаемое значение функции f и затем возвращает возвращаемое значение....
+// Both f and g are invoked with the same this value as h was invoked with.
+function compose(f, g) {
+  return function (...args) {
+    // Используем call для f (там одиночное значение) и apply для g (там массив)
+    console.log(g);
+    return f.call(this, g.apply(this, args));
+  };
+}
+
+const sum_ = (x, y) => x + y;
+const square_ = (x) => x * x;
+compose(square_, sum_)(2, 3); // => 25; квадрат суммы
+
+// Функции с частичным применением
