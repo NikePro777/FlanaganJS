@@ -91,7 +91,7 @@ console.log(5 % -2); // в данном случае плюс
 "1" + "2"; // 12
 1 + {}; //'1[object Object]'
 true + true; //2
-2 + null; // 2 null=>0
+2 + null; // 2 null=>0 =2
 2 + undefined; // NaN т.к. undefined=> NaN
 
 // 4.8.2 Унарные арифметические операции
