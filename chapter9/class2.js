@@ -93,3 +93,61 @@ class Range {
 let s = Range.parse("(1...10)"); // возвращает новый обьект  Range
 console.log(s);
 //s.parse("(1...10)"); // TypeError
+
+// 9.3.3 Открытые, закрытые и статические поля
+// статическое поле должно быть не в теле класса
+
+// Допустим мы написали класс, который инициализирует три поля:
+
+class Buffer {
+  constructor() {
+    this.size = 0;
+    this.capacity = 4096;
+    this.buffer = new Uint8Array(this.capacity);
+  }
+}
+const a = new Buffer();
+console.log(a);
+
+// поидее тоже самое можно уже так
+
+class Buffer2 {
+  size = 0;
+  capacity = 4096;
+  buffer = new Uint8Array(this.capacity);
+}
+const a1 = new Buffer2();
+// a1.size = 1;
+console.log(a1);
+
+// доацстим мы хотим чтобы пользователь не мог изменить поле size нашего класса, тогда надо сделать его статическим (добавив#):
+class Buffer3 {
+  #size = 0; // в этом случае нам сначала необходимо обьявить закрытое поле, а затем уже использовать
+  get size() {
+    return this.#size;
+  }
+}
+const a3 = new Buffer3();
+a3.size = 1; // ошибки нет, но ничего не поменялось
+console.log(a3);
+console.log(a3.size); // 0
+
+// static - если добавить перед определением закрытых или открытых полей, то такие поля будут создаваться как свойство конструктора а не экземпляра
+// сделаем range.parse собственным статическим полем:
+class Buffer4 {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+  static integerRangePattern = /^\((\d+)\.\.\.(\d+)\)$/;
+  static parse(s) {
+    let matches = s.match(Buffer4.integerRangePattern);
+    if (!matches) {
+      throw new TypeError(`Cannot parse Range from '${s}'.`);
+    }
+    return new Buffer4(parseInt(matches[1]), parseInt(matches[2]));
+  }
+}
+// если надо чтобы это поле было доступно только внутри класса , то надо назвать #pattern
+let f = Buffer4.parse("(23...43)");
+console.log(f);
