@@ -68,3 +68,34 @@ console.log(c.plus(d).toString());
 console.log(c.magnitude);
 console.log(Complex.product(c, d));
 console.log(Complex.ZERO.toString());
+
+// 9.4 Добавление методов в существующие классы
+// Можно просто добавлять свойство прототипу и класс автоматически сможет им пользоваться:
+// Добавим способ вычисления комплексно сопряженного числа
+Complex.prototype.conj = function () {
+  return new Complex(this.r, -this.i);
+};
+
+// Если новый метод starsWidth() класса String  еще не определен, то
+if (!String.prototype.startsWith) {
+  // тогда определить его с использованием более старого метода:
+  String.prototype.startsWith = function (s) {
+    return this.indexOf(s) === 0;
+  };
+}
+// еще пример: добавить функцию, вызывающюю хэлоу определенное кол-во раз:
+let n = 3;
+
+Number.prototype.times = function (f, context) {
+  let n = this.valueOf();
+  for (let i = 0; i < n; i++) {
+    f.call(context, i);
+  }
+};
+
+n.times((i) => {
+  console.log(`hello${i}`);
+});
+
+// крч все бы ничего, но мы изменяем глобальные свойства, поэтому если когда нибудь появятся свойства с такими же именами - будет пздц
+n.times(3);
