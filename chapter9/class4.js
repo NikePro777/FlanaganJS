@@ -109,3 +109,30 @@ class TypedMap extends Map {
 // мы не можем использовать this в конструкторе пока не вызовем конструткор суперкласса методом super()
 // new.target является ссылкой на вызванный конструктор. Говоря по русски когда применяется метод super конструктор суперкласса видит это как new.target
 // п о хорошему суперкласс не должен знать создаются ли из него подклассы, но иногда полезно применять new.target.name
+class Histogram {
+  // To initialize, we just create a Map object to delegate to
+  constructor() { this.map = new Map(); }
+
+  // For any given key, the count is the value in the Map, or zero
+  // if the key does not appear in the Map.
+  count(key) { return this.map.get(key) || 0; }
+
+  // The Set-like method has() returns true if the count is non-zero
+  has(key) { return this.count(key) > 0; }
+
+  // The size of the histogram is just the number of entries in the Map.
+  get size() { return this.map.size; }
+
+  // To add a key, just increment its count in the Map.
+  add(key) { this.map.set(key, this.count(key) + 1); }
+
+  // Deleting a key is a little trickier because we have to delete
+  // the key from the Map if the count goes back down to zero.
+  delete(key) {
+      let count = this.count(key);
+      if (count === 1) {
+          this.map.delete(key);
+      } else if (count > 1) {
+          this.map.set(key, count - 1);
+      }
+  }
