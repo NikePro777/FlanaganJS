@@ -207,3 +207,192 @@ class NotSet extends AbstractSet {
     return `{ x| x ∉ ${this.set.toString()} }`;
   }
 }
+/**
+ * Rangeset конкретный подкласс AbstractSet. Все его члены - конкретные значения которые находятся в диапазоне от  from до to включительно.Поскольку его членами могут быть числа с плавающей точкой, то он не поддерживает перечисление и не имеет значащего размера
+ */
+class RangeSet extends AbstractSet {
+  constructor(from, to) {
+    super();
+    this.from = from;
+    this.to = to;
+  }
+
+  has(x) {
+    return x >= this.from && x <= this.to;
+  }
+  toString() {
+    return `{ x| ${this.from} ≤ x ≤ ${this.to} }`;
+  }
+}
+
+/*
+ * AbstractEnumerableSet абстрактный подкласс AbstractSet.  Он определяет абстрактный метод получения, который возвращает размер множества, а также определяет абстрактный итератор. Затем он реализует конкретные методы isEmpty(), toString(), и equals(). Подклассы которые реализует итератор, метод получения размера и метод has() Свободно получают эти конкретные методы
+ */
+class AbstractEnumerableSet extends AbstractSet {
+  get size() {
+    throw new Error("Абстрактный метод");
+  }
+  [Symbol.iterator]() {
+    throw new Error("Абстрактный метод");
+  }
+
+  isEmpty() {
+    return this.size === 0;
+  }
+  toString() {
+    return `{${Array.from(this).join(", ")}}`;
+  }
+  equals(set) {
+    // Если другое множество не является AbstractEnumerableSet, то оно не равно этому множеству
+    if (!(set instanceof AbstractEnumerableSet)) return false;
+
+    // Если множества не имеют одинакового размера то оно не равно
+    if (this.size !== set.size) return false;
+
+    // Проход в цикле по элементам этого множества
+    for (let element of this) {
+      // Если элемент не находится в другом множестве, то они не равны
+      if (!set.has(element)) return false;
+    }
+    // Элементы совпадают, поэтому множества равны
+    return true;
+  }
+}
+
+/*
+ * SingletonSet Конкретный подкласс AbstractEnumerableSet.
+ * Одноэлементное множество - это множество только для чтения с единственным членом
+ */
+class SingletonSet extends AbstractEnumerableSet {
+  constructor(member) {
+    super();
+    this.member = member;
+  }
+
+  // Мы реализуем следующие 3 метода и унаследуем реализации isEmpty, equals() and toString()
+  has(x) {
+    return x === this.member;
+  }
+  get size() {
+    return 1;
+  }
+  *[Symbol.iterator]() {
+    yield this.member;
+  }
+}
+
+/*
+AbstractWritableSet абстрактный подкласс AbstractEnumerableSet. Он определяет абстрактные методы insert() and
+remove() которые вставляют и удаляют индивидуальные элементы из множества, и реализует конкретные методы add(), subtract(), and intersect(). Здесь наш API-интерфейс отличается от стандартного класса Set в JavaScript.
+*/
+class AbstractWritableSet extends AbstractEnumerableSet {
+  insert(x) {
+    throw new Error("Абстрактный метод");
+  }
+  remove(x) {
+    throw new Error("Абстрактный метод");
+  }
+
+  add(set) {
+    for (let element of set) {
+      this.insert(element);
+    }
+  }
+
+  subtract(set) {
+    for (let element of set) {
+      this.remove(element);
+    }
+  }
+
+  intersect(set) {
+    for (let element of this) {
+      if (!set.has(element)) {
+        this.remove(element);
+      }
+    }
+  }
+}
+
+/**
+ BitSet конкретный подкласс AbstractWritableSet с эффективной реализацией множества фиксированного размера, предназначенный для множеств, чьи элементы являются неотрицательными целыми числами, которые меньше определенного максимального размера
+ */
+class BitSet extends AbstractWritableSet {
+  constructor(max) {
+    super();
+    this.max = max; // Максимальное целое число, которое мы можем хранить.
+    this.n = 0; // Сколько целых чисел содержит множество
+    this.numBytes = Math.floor(max / 8) + 1; // Как много байт нам надо
+    this.data = new Uint8Array(this.numBytes); // The bytes
+  }
+
+  // Внутренний метод для проверки, является ли значениедопустимым членом этого множества
+  _valid(x) {
+    return Number.isInteger(x) && x >= 0 && x <= this.max;
+  }
+
+  // Проверяет, установлен ли указанный бит указанного байта в нашем массиве данных. .возвращает  true или false.
+  _has(byte, bit) {
+    return (this.data[byte] & BitSet.bits[bit]) !== 0;
+  }
+
+  // Находится ли значение x в нашем BitSet?
+  has(x) {
+    if (this._valid(x)) {
+      let byte = Math.floor(x / 8);
+      let bit = x % 8;
+      return this._has(byte, bit);
+    } else {
+      return false;
+    }
+  }
+
+  // Вставляет значение x в BitSet
+  insert(x) {
+    if (this._valid(x)) {
+      // Если значение допустимо
+      let byte = Math.floor(x / 8); // переводим байты в биты
+      let bit = x % 8;
+      if (!this._has(byte, bit)) {
+        // Если этот бит еще не установлен
+        this.data[byte] |= BitSet.bits[bit]; // тогда установить его
+        this.n++; // и инкрементировать размер
+      }
+    } else {
+      throw new TypeError("Недопустимый элемент множества: " + x);
+    }
+  }
+
+  remove(x) {
+    if (this._valid(x)) {
+      // Если значение допустимо
+      let byte = Math.floor(x / 8); // переводим байты в биты
+      let bit = x % 8;
+      if (this._has(byte, bit)) {
+        // Если бит уже установлен
+        this.data[byte] &= BitSet.masks[bit]; // тогда сбрасываем
+        this.n--; // и декременируем размер
+      }
+    } else {
+      throw new TypeError("Недопустимый элемент множества: " + x);
+    }
+  }
+
+  // Геттер возвращающий размер множества
+  get size() {
+    return this.n;
+  }
+
+  // Выполняет итерацию по множеству, просто проверяя каждый бит по очереди (можно было и пооптимизированне выполнить это)
+  *[Symbol.iterator]() {
+    for (let i = 0; i <= this.max; i++) {
+      if (this.has(i)) {
+        yield i;
+      }
+    }
+  }
+}
+
+// Некоторые заранее расчитанные значения, используемые методами has(), insert() and remove()
+BitSet.bits = new Uint8Array([1, 2, 4, 8, 16, 32, 64, 128]);
+BitSet.masks = new Uint8Array([~1, ~2, ~4, ~8, ~16, ~32, ~64, ~128]);
