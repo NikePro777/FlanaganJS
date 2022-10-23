@@ -59,4 +59,23 @@ map.forEach((val, key, m) => {
 const array = [...map];
 console.log(array);
 const array2 = Array.from(map);
-console.log(array2); // тоде самое
+console.log(array2); // тоже самое
+
+// так как map - это усложненный обьект, мы можем сделать обьект из карты
+const mapObj = Object.fromEntries(map.entries());
+console.log(mapObj); // но сдесь один момент - так как обьекты не могут быть ключами, то у нас будет [object Object]:"value of object" ( когда обьект с помощью toString приводят к строке получается [object Object])
+
+// применение
+const users = [{ name: "Elena" }, { name: "Alex" }, { name: "Irina" }];
+// допустим мы хотим вывести когда каждый пользователь посещая допустим сайт
+const visits = new Map();
+visits
+  .set(users[0], new Date())
+  .set(users[1], new Date(new Date().getTime() + 1000 * 60))
+  .set(users[2], new Date(new Date().getTime() + 5000 * 60)); // т.е. мы создали карту, где ключами являются три разных пользователя. и для каждого у них записано время посещения чего либо. Дальше мы можем создать функцию , которая будет нам выводить последнее посещение:
+
+function lastVisits(user) {
+  return visits.get(user);
+}
+// т.е. как ключ мы передаем обьект пользователя
+console.log(lastVisits(users[1]));
