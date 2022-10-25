@@ -317,7 +317,7 @@ class AbstractWritableSet extends AbstractEnumerableSet {
 /**
  BitSet конкретный подкласс AbstractWritableSet с эффективной реализацией множества фиксированного размера, предназначенный для множеств, чьи элементы являются неотрицательными целыми числами, которые меньше определенного максимального размера
  */
-class BitSet extends AbstractWritableSet {
+export default class BitSet extends AbstractWritableSet {
   constructor(max) {
     super();
     this.max = max; // Максимальное целое число, которое мы можем хранить.
