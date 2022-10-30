@@ -33,7 +33,7 @@ import BitSet from "../class/class4";
 // оператор import может импортировать любое количство , перечисляя их имена в скобках, все идентификаторы внутри скобок, поднимаются наверх и ведут себя как константы
 
 // импортирование из модуля где много значений может быть таким:
-import * as stats from "./stats.js";
+import * as stats from "./stats.js.js.js";
 // в таком случае оператор import создает обьект и присваевает его константе по имени stats
 // юлагодаря этому все функции будут свойствами и к ним можно обращаться stats.mean()
 
@@ -62,4 +62,4 @@ export { default as meanJS } from "../class/class4";
 export { mean as deafault } from "../class/class4";
 
 // ну и хз для чего но все же, если надо экспортировать по умолчанию, экспортируемый по умолчанию модуль, то
-export { default } from "./stats/mean.js";
+export { default } from "./stats/mean.js.js.js";
