@@ -25,7 +25,7 @@ export { Circle, pi }; // причем это не модуль, а просто
 
 // 10.3.2 Импортирование в ES6
 // импортируются экспортированные модули с помощью ключевого слова import
-import BitSet from "../class/class4";
+import BitSet from "../chapter9.class/class4";
 // import идентификатор from (ключевое слово) строковый литерал - имя модуля который импортируется
 // значения которые импортируются это константы
 // когда нужно импортировать много файлов из одого:
@@ -41,7 +41,7 @@ import * as stats from "./stats.js.js.js";
 
 // 10.3.2 Импортирование с переименованием
 // делается с помощью ключевого слова as
-import { BittSet as newName } from "../class/class4";
+import { BittSet as newName } from "../chapter9.class/class4";
 // тут главное чтобы это в фигурных скобках было
 
 // можем кстать при экспорте делать тоже самое
@@ -49,17 +49,17 @@ export { pi as PI };
 
 // Повторное экпортирование
 // когда надо что то импортировать, и потом это же самое экспортировать , то вместо:
-import { BittSet as newName } from "../class/class4";
+import { BittSet as newName } from "../chapter9.class/class4";
 export { newName };
 // можно просто записать:
-export { newName } from "../class/class4";
+export { newName } from "../chapter9.class/class4";
 
 // ну и тоже самое доступно с переименованием и экспортом по умолчанию
 
-export { default as meanJS } from "../class/class4";
+export { default as meanJS } from "../chapter9.class/class4";
 
 //Импортировать функцию mean() из ./stats.js и сделать ее экспортом по умолчанию этого модуля:
-export { mean as deafault } from "../class/class4";
+export { mean as deafault } from "../chapter9.class/class4";
 
 // ну и хз для чего но все же, если надо экспортировать по умолчанию, экспортируемый по умолчанию модуль, то
 export { default } from "./stats/mean.js.js.js";
